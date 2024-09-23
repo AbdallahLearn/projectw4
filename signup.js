@@ -42,6 +42,8 @@ btnSignup.addEventListener('click', function() {
             username: username.value,
             email: email.value,
             password: password.value,
+            url:"",
+            likes: 0
         }),
         headers: {
             'Content-type': 'application/json; charset=UTF-8',

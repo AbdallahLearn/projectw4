@@ -20,7 +20,7 @@
       .img{
        border:5px solid black;
         width:100%;
-        height:auto;
+        height:500px;
       }
       .img-text-container{
         border-top:10px solid black;
@@ -28,6 +28,7 @@
         border-right:10px solid red;
         border-bottom:10px solid red;
         padding:10px;
+        height:auto;
       }
 
       @media screen and (max-width:780px){
@@ -113,40 +114,118 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 
     <script>
-
-
-const url = 'https://66e7e6bbb17821a9d9da7058.mockapi.io/signup';
+  const url = 'https://66e7e6bbb17821a9d9da7058.mockapi.io/signup';
 const containerGallery = document.querySelector('.container-gallery');
 
 fetch(url)
     .then((res) => res.json())
     .then((data) => {
+
         console.log(data);
         data.forEach((e) => {
-            const imgAll = document.createElement('div');
-            imgAll.classList.add('img-all');
-            containerGallery.appendChild(imgAll);
+            // Check if the object has the 'url' key and it is not empty
+            if ('url' in e && e.url) {
+                const imgAll = document.createElement('div');
+                imgAll.classList.add('img-all');
+                containerGallery.appendChild(imgAll);
 
-            const imgText = document.createElement('div');
-            imgText.classList.add('img-text-container');
-            imgAll.appendChild(imgText);
+                const imgText = document.createElement('div');
+                imgText.classList.add('img-text-container');
+                imgAll.appendChild(imgText);
 
-            const img = document.createElement('img');
-            img.classList.add('img');
+                const img = document.createElement('img');
+                img.classList.add('img');
+                img.src = e.url; // Use the correct URL key
+                img.alt = 'Uploaded Image';
+                imgText.appendChild(img);
 
-            // Set the image source from the URL
-            img.src = e.url; // Ensure you're using the correct key for the image URL
-            img.alt = 'Uploaded Image'; // Set alt attribute
-            imgText.appendChild(img); // Append the img to the text container
+                const h3 = document.createElement('h3');
+                h3.textContent = `Artist`;
+                imgText.appendChild(h3);
+                
 
-            const h3 = document.createElement('h3');
-            h3.textContent = `artist`; // Use `e.username` to get the correct username
-            imgText.appendChild(h3); // Append the heading to the text container
+                // Create heart button
+                const heartButton = document.createElement('button');
+                heartButton.classList.add('heart-button');
+                heartButton.textContent = '❤️'; // Heart icon
+                heartButton.style.backgroundColor='white'
+                heartButton.style.border = 'none'
+                imgText.appendChild(heartButton);
+
+                // Create a span to display the like count
+                const likeCount = document.createElement('span');
+                likeCount.classList.add('like-count');
+                likeCount.textContent = e.likes || '0'; // Initialize like count from API
+                imgText.appendChild(likeCount);
+
+                // Add event listener to the heart button
+                heartButton.addEventListener('click', () => {
+                    // Increment like count
+                    let currentCount = parseInt(likeCount.textContent, 10);
+                    currentCount++;
+                    likeCount.textContent = currentCount; // Update like count
+
+                    // Update likes in the API
+                    fetch(`${url}/${e.id}`, {
+                        method: 'PUT', // Use PUT to update the record
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ ...e, likes: currentCount }) // Update the likes
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json(); // Parse the JSON response
+                    })
+                    .then(updatedData => {
+                        console.log('Updated likes:', updatedData); // Confirm update
+                    })
+                    .catch(error => {
+                        console.error('Error updating likes:', error);
+                    });
+                });
+            }
         });
     })
     .catch(error => {
         console.error('Fetch error:', error);
     });
+
+
+// const url = 'https://66e7e6bbb17821a9d9da7058.mockapi.io/signup';
+// const containerGallery = document.querySelector('.container-gallery');
+
+// fetch(url)
+//     .then((res) => res.json())
+//     .then((data) => {
+//         console.log(data);
+//         data.forEach((e) => {
+//             const imgAll = document.createElement('div');
+//             imgAll.classList.add('img-all');
+//             containerGallery.appendChild(imgAll);
+
+//             const imgText = document.createElement('div');
+//             imgText.classList.add('img-text-container');
+//             imgAll.appendChild(imgText);
+
+//             const img = document.createElement('img');
+//             img.classList.add('img');
+
+//             // Set the image source from the URL
+//             img.src = e.url; // Ensure you're using the correct key for the image URL
+//             img.alt = 'Uploaded Image'; // Set alt attribute
+//             imgText.appendChild(img); // Append the img to the text container
+
+//             const h3 = document.createElement('h3');
+//             h3.textContent = `artist`; // Use `e.username` to get the correct username
+//             imgText.appendChild(h3); // Append the heading to the text container
+//         });
+//     })
+//     .catch(error => {
+//         console.error('Fetch error:', error);
+//     });
 
 
         let usernameValue = localStorage.getItem('Username')

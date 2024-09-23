@@ -1,5 +1,4 @@
 const url = 'https://66e7e6bbb17821a9d9da7058.mockapi.io/signup';
-// const fname = document.getElementById('fname');
 const username = document.getElementById('username');
 const email = document.getElementById('email');
 const password = document.getElementById('password');
@@ -13,13 +12,6 @@ btnSignup.addEventListener('click', function() {
     const emailReg = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     const uppercasePattern = /[A-Z]/;
 
-    
-    // if (fname.value.length <= 3) {
-    //     errorName.style.display = 'block';
-    //     return;
-    // } else {
-    //     errorName.style.display = 'none';
-    // }
 
     
     if (!uppercasePattern.test(username.value)) {
@@ -47,10 +39,9 @@ btnSignup.addEventListener('click', function() {
     fetch(url, {
         method: 'POST',
         body: JSON.stringify({
-            // name: fname.value,
             username: username.value,
             email: email.value,
-            password: password.value
+            password: password.value,
         }),
         headers: {
             'Content-type': 'application/json; charset=UTF-8',

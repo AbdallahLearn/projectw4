@@ -197,21 +197,36 @@ img{
     text-align: center;
 }
 .img-upload .title{
-    font-size: larger;
+    font-size: large;
+    color:white;
     margin-bottom: 10px;
+    background-color: rgb(255, 183, 0);
+    padding:10px 0 ;
+    border-radius:5px;
 }
 #image-input{
     padding:10px;
     /* background-color: ; */
 }
-#remove-img{
+#remove-img,#upload-img{
     padding:10px 0;
     background-color: white;
     border:1px solid rgba(255, 0, 0, 0.566);
     font-size: larger;
     margin-top: 10px;
     color:red;
+    border-radius: 5px;
     display: none;
+}
+#upload-img{
+    color:green;
+    display: block;
+    border:1px solid rgba(98, 255, 0, 0.566);
+    transition: 0.4s ease;
+}
+#upload-img:hover{
+    background-color: green;
+    color:white;
 }
 .img-canvas{
     width:100px;
@@ -241,6 +256,9 @@ canvas{
 }
 .username{
     margin-right:20px;
+}
+.form-control{
+    display: none;
 }
 
 @media screen and (max-width:600px){

@@ -19,7 +19,6 @@ let prevMouseX, prevMouseY, snapshot,
     imageLoaded = false,
     selectColor = "#000";
 
-// const img = new Image();
 const imageCanvas = document.createElement('canvas');
 const imageCtx = imageCanvas.getContext("2d");
 
@@ -44,89 +43,55 @@ const getMousePos = (e) => {
     const rect = canvas.getBoundingClientRect();
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+
     return {
-        x: Math.floor(clientX - rect.left * (canvas.width / rect.width)),
-        y: Math.floor(clientY - rect.top * (canvas.height / rect.height))
+        x: Math.floor((clientX - rect.left) * scaleX),
+        y: Math.floor((clientY - rect.top) * scaleY)
     };
 };
-
-
-//original
-// Load image onto off-screen canvas
-// const loadImage = (event) => {
-//     const file = event.target.files[0];
-//     const reader = new FileReader();
-    
-//     reader.onload = (e) => {
-//         const img = new Image();
-//         img.onload = () => {
-//             imageCanvas.width = canvas.width;
-//             imageCanvas.height = canvas.height;
-//             imageCtx.clearRect(0, 0, imageCanvas.width, imageCanvas.height); // Clear any existing image
-//             imageCtx.drawImage(img, 0, 0, canvas.width, canvas.height); // Draw image to the off-screen canvas
-//             ctx.drawImage(imageCanvas, 0, 0); // Draw image on the main canvas
-//             imageLoaded = true;
-//         };
-//         img.src = e.target.result;
-//     };
-    
-//     if (file) {
-//         reader.readAsDataURL(file);
-//     }
-    
-//     removeImageBtn.style.display = "block";
-// };
-//original
-// const removeImage = () => {
-//     if (imageLoaded) {
-//         // Clear the off-screen canvas without affecting the main canvas
-//         imageCtx.clearRect(0, 0, imageCanvas.width, imageCanvas.height); // Clear the off-screen canvas
-//         setCanvasBackground();
-//         imageLoaded = false; // Reset flag
-//         removeImageBtn.style.display = "none";
-//     }
-// };
-
 
 const loadImage = (event) => {
     const file = event.target.files[0];
     const reader = new FileReader();
-    
+
     reader.onload = (e) => {
-        const drawingBoard = document.querySelector('.drawing-board');
+        const img = new Image();
+        img.onload = () => {
+            const drawingBoard = document.querySelector('.drawing-board');
 
-        // Set the background image for the drawing board
-        drawingBoard.style.backgroundImage = `url(${e.target.result})`;
-        drawingBoard.style.backgroundSize = 'cover'; // Cover the entire drawing board
-        drawingBoard.style.backgroundPosition = 'center'; // Center the image
-        
-        // Optionally, set the canvas size to match the drawing board
-        const drawingBoardWidth = drawingBoard.clientWidth;
-        const drawingBoardHeight = drawingBoard.clientHeight;
-        canvas.width = drawingBoardWidth;
-        canvas.height = drawingBoardHeight;
+            // Set the background image for the drawing board
+            drawingBoard.style.backgroundImage = `url(${e.target.result})`;
+            drawingBoard.style.backgroundSize = 'cover'; // Cover the entire drawing board
+            drawingBoard.style.backgroundPosition = 'center'; // Center the image
 
-        removeImageBtn.style.display = "block"; // Show remove button
+            // Set the canvas size to match the drawing board
+            const drawingBoardWidth = drawingBoard.clientWidth;
+            const drawingBoardHeight = drawingBoard.clientHeight;
+            canvas.width = drawingBoardWidth;
+            canvas.height = drawingBoardHeight;
+
+            // Draw the loaded image onto the canvas
+            // ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+            removeImageBtn.style.display = "block"; // Show remove button
+        };
+        img.src = e.target.result; // Start loading the image
     };
-    
+
     if (file) {
         reader.readAsDataURL(file);
     }
 };
 
-// Function to remove the background image
 const removeImage = () => {
     const drawingBoard = document.querySelector('.drawing-board');
     drawingBoard.style.backgroundImage = 'none'; // Remove the background image
     imageInput.value = ""; // Reset the file input
     removeImageBtn.style.display = "none"; // Hide remove button
 };
-
-
-
-
-
-
 
 const drawLine = (e) => {
     const { x, y } = getMousePos(e);
@@ -233,12 +198,38 @@ clearCanvas.addEventListener('click', () => {
 });
 
 saveBtn.addEventListener('click', () => {
+    const dataURL = canvas.toDataURL('image/png');
     
+    const data = {
+        username: username.value,
+        url: [dataURL] // Your API should expect the URL in this format
+    };
+
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data) // Convert the object to a JSON string
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`Network response was not ok: ${response.statusText}`);
+        }
+        return response.json(); // Parse the JSON response
+    })
+    .then(data => {
+        console.log('Success:', data); // Handle success response
+    })
+    .catch(error => {
+        console.error('Error:', error); // Handle error response
+    });
+
     const link = document.createElement("a");
     link.download = `${Date.now()}.jpg`;
-    link.href = canvas.toDataURL();
-    setCanvasBackground();
-    link.click();
+    link.href = dataURL; // Use the Data URL from the canvas
+    setCanvasBackground(); // Set the background if necessary
+    link.click(); // Trigger the download
 });
 
 // New input for image upload
@@ -255,14 +246,50 @@ canvas.addEventListener("touchstart", startDraw);
 canvas.addEventListener("touchmove", drawing);
 canvas.addEventListener("touchend", () => isDrawing = false);
 
+let usernameValue = localStorage.getItem('Username');
+console.log(usernameValue);
 
-let usernameValue = localStorage.getItem('Username')
-console.log(usernameValue)
+let username = document.querySelector('#username');
+username.textContent = ` ${usernameValue}`;
 
-let username = document.querySelector('#username')
-
-username.textContent = ` ${usernameValue}`
-
-function logout(){
-    window.location.href = 'login.html'
+function logout() {
+    window.location.href = 'login.html';
 }
+
+const url = 'https://66e7e6bbb17821a9d9da7058.mockapi.io/signup'; // Ensure this is the correct endpoint for image uploads
+const uploadImg = document.querySelector('#upload-img');
+
+imageInput.addEventListener('change', e => {
+    const file = imageInput.files[0];
+    const reader = new FileReader();
+
+    reader.addEventListener("load", () => {
+        console.log(reader.result);
+    });
+    reader.readAsDataURL(file);
+});
+
+uploadImg.addEventListener('click', function() {
+    const file = imageInput.files[0]; // Get the selected file
+
+    if (!file) {
+        alert('Please select an image file to upload.');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('image', file); // Append the file to the FormData object
+
+    // Send a POST request to your API
+    fetch(url, {
+        method: 'POST',
+        body: formData,
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Success:', data); // Handle success response
+    })
+    .catch(error => {
+        console.error('Error:', error); // Handle error response
+    });
+});

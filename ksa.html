@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KSA</title>
-     <!-- Bootstrap CSS -->
-     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-     <link rel="stylesheet" href="style.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
     <div class="nav-bar-container">
@@ -16,46 +19,45 @@
                 <div class="container-logo">
                     <div class="logo-header">
                         <a class="navbar-brand" href="#"><img class="logo" src="dark-logo.png" alt=""></a>
-                    
-                        
-                  
+
+
+
                     </div>
-                    
+
                 </div>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-              
-              <div class="collapse navbar-collapse text-center" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                  <li class="nav-item">
-                    <a class="nav-link " aria-current="page" href="index.html">Home</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link active" href="#">KSA </a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="#">Gallery</a>
-                  </li>
-                </ul>
-                <form class="d-flex justify-content-center">
-                    <div class="btn-login">
-                        <button type="button" class="btn btn-outline-primary" onclick="login()">تسجيل الدخول</button>
+
+                <div class="collapse navbar-collapse text-center" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link " aria-current="page" href="home.html">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#">KSA </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="gallery.html">Gallery</a>
+                        </li>
+                    </ul>
+                    <div class="username">
+                        <h1 id="username" style='color: white'>Username</h1>
                     </div>
-                    <div class="btn-singin">
-                        <button type="button" class="btn btn-outline-success" onclick="signup()">تسجيل</button>
-                    </div>
-                </form>
-              </div>
+                    <button type="button" class="btn btn-outline-danger" onclick="logout()">Log out</button>
+
+                </div>
             </div>
-          </nav>
+        </nav>
     </div>
 
 
 
 
 
-    
+
     <div class="container-paint">
         <h2>Saudi National Year 94!</h2>
         <canvas id="colorCanvas"></canvas>
@@ -63,93 +65,120 @@
         <br>
         <div class="container-btns">
             <button id="resetButton" class="btn btn-warning mt-2">Reset</button>
-            <button id="downloadButton" class="btn btn-success mt-2">Download</button>    
+            <button id="downloadButton" class="btn btn-success mt-2">Download</button>
         </div>
-      </div>
+    </div>
 
     <script>
         const canvas = document.getElementById('colorCanvas');
-const ctx = canvas.getContext('2d');
-const colorPicker = document.getElementById('colorPicker');
-
-// Array of image sources
-const images = ['ksa.png', 'tower.png', 'cube.png', 'image4.png']; // Add your images here
-
-// Function to load and draw a random image
-function loadRandomImage() {
-    const randomIndex = Math.floor(Math.random() * images.length);
-    const image = new Image();
-    image.src = images[randomIndex];
-    image.style.width = '200px';
-    image.style.height = '200px';
+        const ctx = canvas.getContext('2d');
+        const colorPicker = document.getElementById('colorPicker');
+        const download = document.getElementById('downloadButton');
+        const resetButton = document.getElementById('resetButton');
     
-    image.onload = () => {
-        canvas.width = image.width;
-        canvas.height = image.height;    
-        ctx.drawImage(image, 0, 0);
-    };
-}
-
-// Load a random image initially
-loadRandomImage();
-
-// Function to handle mouse down
-canvas.addEventListener('mousedown', (e) => {
-    const rect = canvas.getBoundingClientRect();
-    const x = Math.floor(e.clientX - rect.left);
-    const y = Math.floor(e.clientY - rect.top);
-    fill(x, y);
-});
-
-// Flood fill algorithm
-function fill(x, y) {
-    const targetColor = ctx.getImageData(x, y, 1, 1).data;
-    const newColor = hexToRgb(colorPicker.value);
+        // Array of image sources
+        const images = ['ksa.png', 'tower.png', 'b.png', 'c.png']; // Add your images here
+        let originalImage = null; // Variable to store the original image
     
-    if (colorsMatch(targetColor, newColor)) return;
-
-    const stack = [[x, y]];
-    while (stack.length) {
-        const [nx, ny] = stack.pop();
-        if (isInBounds(nx, ny) && colorsMatch(ctx.getImageData(nx, ny, 1, 1).data, targetColor)) {
-            ctx.fillStyle = colorPicker.value;
-            ctx.fillRect(nx, ny, 1, 1); // Fill pixel
-            stack.push([nx + 1, ny]);
-            stack.push([nx - 1, ny]);
-            stack.push([nx, ny + 1]);
-            stack.push([nx, ny - 1]);
+        // Function to load and draw a random image
+        function loadRandomImage() {
+            const randomIndex = Math.floor(Math.random() * images.length);
+            const image = new Image();
+            image.src = images[randomIndex];
+            
+            image.onload = () => {
+                canvas.width = image.width;
+                canvas.height = image.height;
+                ctx.drawImage(image, 0, 0);
+                originalImage = ctx.getImageData(0, 0, canvas.width, canvas.height); // Store original image
+            };
         }
-    }
-}
-
-// Utility functions
-function hexToRgb(hex) {
-    const bigint = parseInt(hex.slice(1), 16);
-    return [
-        (bigint >> 16) & 255, // Red
-        (bigint >> 8) & 255,  // Green
-        bigint & 255,         // Blue
-        255                   // Alpha
-    ];
-}
-
-function colorsMatch(color1, color2) {
-    return (
-        color1[0] === color2[0] &&
-        color1[1] === color2[1] &&
-        color1[2] === color2[2]
-    );
-}
-
-function isInBounds(x, y) {
-    return x >= 0 && x < canvas.width && y >= 0 && y < canvas.height;
-}
-
-// Color picker event
-colorPicker.addEventListener('input', (e) => {
-    ctx.fillStyle = e.target.value;
-});
-
+    
+        // Load a random image initially
+        loadRandomImage();
+    
+        // Function to handle mouse down
+        canvas.addEventListener('mousedown', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = Math.floor(e.clientX - rect.left);
+            const y = Math.floor(e.clientY - rect.top);
+            fill(x, y);
+        });
+    
+        // Flood fill algorithm
+        function fill(x, y) {
+            const targetColor = ctx.getImageData(x, y, 1, 1).data;
+            const newColor = hexToRgb(colorPicker.value);
+    
+            if (colorsMatch(targetColor, newColor)) return;
+    
+            const stack = [[x, y]];
+            while (stack.length) {
+                const [nx, ny] = stack.pop();
+                if (isInBounds(nx, ny) && colorsMatch(ctx.getImageData(nx, ny, 1, 1).data, targetColor)) {
+                    ctx.fillStyle = colorPicker.value;
+                    ctx.fillRect(nx, ny, 1, 1); // Fill pixel
+                    stack.push([nx + 1, ny]);
+                    stack.push([nx - 1, ny]);
+                    stack.push([nx, ny + 1]);
+                    stack.push([nx, ny - 1]);
+                }
+            }
+        }
+    
+        // Utility functions
+        function hexToRgb(hex) {
+            const bigint = parseInt(hex.slice(1), 16);
+            return [
+                (bigint >> 16) & 255, // Red
+                (bigint >> 8) & 255,  // Green
+                bigint & 255,         // Blue
+                255                   // Alpha
+            ];
+        }
+    
+        function colorsMatch(color1, color2) {
+            return (
+                color1[0] === color2[0] &&
+                color1[1] === color2[1] &&
+                color1[2] === color2[2]
+            );
+        }
+    
+        function isInBounds(x, y) {
+            return x >= 0 && x < canvas.width && y >= 0 && y < canvas.height;
+        }
+    
+        // Color picker event
+        colorPicker.addEventListener('input', (e) => {
+            ctx.fillStyle = e.target.value;
+        });
+    
+        // Download the canvas as an image
+        download.addEventListener('click', () => {
+            const link = document.createElement('a');
+            link.download = 'canvas-image.png'; // The name of the downloaded file
+            link.href = canvas.toDataURL(); // Get the image data from the canvas
+            link.click(); // Trigger the download
+        });
+    
+        // Reset the canvas to the original image
+        resetButton.addEventListener('click', () => {
+            if (originalImage) {
+                ctx.putImageData(originalImage, 0, 0); // Restore the original image
+            }
+        });
+    
+        let usernameValue = localStorage.getItem('Username');
+        let username = document.querySelector('#username');
+        username.textContent = ` ${usernameValue}`;
+    
+        function logout() {
+            window.location.href = 'login.html';
+        }
     </script>
+    
+    
 </body>
+
 </html>

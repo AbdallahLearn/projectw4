@@ -50,40 +50,83 @@ const getMousePos = (e) => {
     };
 };
 
+
+//original
 // Load image onto off-screen canvas
+// const loadImage = (event) => {
+//     const file = event.target.files[0];
+//     const reader = new FileReader();
+    
+//     reader.onload = (e) => {
+//         const img = new Image();
+//         img.onload = () => {
+//             imageCanvas.width = canvas.width;
+//             imageCanvas.height = canvas.height;
+//             imageCtx.clearRect(0, 0, imageCanvas.width, imageCanvas.height); // Clear any existing image
+//             imageCtx.drawImage(img, 0, 0, canvas.width, canvas.height); // Draw image to the off-screen canvas
+//             ctx.drawImage(imageCanvas, 0, 0); // Draw image on the main canvas
+//             imageLoaded = true;
+//         };
+//         img.src = e.target.result;
+//     };
+    
+//     if (file) {
+//         reader.readAsDataURL(file);
+//     }
+    
+//     removeImageBtn.style.display = "block";
+// };
+//original
+// const removeImage = () => {
+//     if (imageLoaded) {
+//         // Clear the off-screen canvas without affecting the main canvas
+//         imageCtx.clearRect(0, 0, imageCanvas.width, imageCanvas.height); // Clear the off-screen canvas
+//         setCanvasBackground();
+//         imageLoaded = false; // Reset flag
+//         removeImageBtn.style.display = "none";
+//     }
+// };
+
+
 const loadImage = (event) => {
     const file = event.target.files[0];
     const reader = new FileReader();
     
     reader.onload = (e) => {
-        const img = new Image();
-        img.onload = () => {
-            imageCanvas.width = canvas.width;
-            imageCanvas.height = canvas.height;
-            imageCtx.clearRect(0, 0, imageCanvas.width, imageCanvas.height); // Clear any existing image
-            imageCtx.drawImage(img, 0, 0, canvas.width, canvas.height); // Draw image to the off-screen canvas
-            ctx.drawImage(imageCanvas, 0, 0); // Draw image on the main canvas
-            imageLoaded = true;
-        };
-        img.src = e.target.result;
+        const drawingBoard = document.querySelector('.drawing-board');
+
+        // Set the background image for the drawing board
+        drawingBoard.style.backgroundImage = `url(${e.target.result})`;
+        drawingBoard.style.backgroundSize = 'cover'; // Cover the entire drawing board
+        drawingBoard.style.backgroundPosition = 'center'; // Center the image
+        
+        // Optionally, set the canvas size to match the drawing board
+        const drawingBoardWidth = drawingBoard.clientWidth;
+        const drawingBoardHeight = drawingBoard.clientHeight;
+        canvas.width = drawingBoardWidth;
+        canvas.height = drawingBoardHeight;
+
+        removeImageBtn.style.display = "block"; // Show remove button
     };
     
     if (file) {
         reader.readAsDataURL(file);
     }
-    
-    removeImageBtn.style.display = "block";
 };
 
+// Function to remove the background image
 const removeImage = () => {
-    if (imageLoaded) {
-        // Clear the off-screen canvas without affecting the main canvas
-        imageCtx.clearRect(0, 0, imageCanvas.width, imageCanvas.height); // Clear the off-screen canvas
-        setCanvasBackground();
-        imageLoaded = false; // Reset flag
-        removeImageBtn.style.display = "none";
-    }
+    const drawingBoard = document.querySelector('.drawing-board');
+    drawingBoard.style.backgroundImage = 'none'; // Remove the background image
+    imageInput.value = ""; // Reset the file input
+    removeImageBtn.style.display = "none"; // Hide remove button
 };
+
+
+
+
+
+
 
 const drawLine = (e) => {
     const { x, y } = getMousePos(e);
@@ -213,9 +256,13 @@ canvas.addEventListener("touchmove", drawing);
 canvas.addEventListener("touchend", () => isDrawing = false);
 
 
-function login(){
+let usernameValue = localStorage.getItem('Username')
+console.log(usernameValue)
+
+let username = document.querySelector('#username')
+
+username.textContent = ` ${usernameValue}`
+
+function logout(){
     window.location.href = 'login.html'
-}
-function signup(){
-     window.location.href = 'signup.html'
 }

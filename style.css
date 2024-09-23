@@ -11,6 +11,7 @@
     justify-content: center;
     min-height:100vh;
     background:rgb(156, 245, 144);
+    
 }
 .container-board{
     display:flex;
@@ -18,6 +19,8 @@
     max-width:1050px;
     padding:10px;
     gap:10px;
+   
+   
 }
 section{
     background:white;
@@ -165,11 +168,16 @@ img{
 
 
 .drawing-board{
-    flex:1
+    flex:1;
+    /* background-image: url('luffy.jpg'); */
+    z-index: 10;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 .drawing-board canvas{
     width:100%;
     height:100%;
+    opacity: 0.5;
 }
 
 
@@ -226,9 +234,13 @@ canvas{
     border: 1px solid black;
     width:50%;
     height:auto;
+    
 }
 #colorPicker{
     margin-top:10px ;
+}
+.username{
+    margin-right:20px;
 }
 
 @media screen and (max-width:600px){
@@ -247,6 +259,7 @@ canvas{
     .drawing-board canvas{
         width:100%;
         height:400px;
+        
     }
     .container-body{
         display: flex;
@@ -257,6 +270,9 @@ canvas{
     }
     .options{
         display:flex;
+    }
+    .navbar-nav{
+        background-color: red;
     }
     
 }

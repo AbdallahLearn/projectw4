@@ -27,7 +27,7 @@ btnLogin.addEventListener('click', function() {
 
             if (user) {
                 localStorage.setItem('Username', usernameValue);
-                window.location.href = 'index.html'
+                window.location.href = 'home.html'
             } else {
                 errorMessage.textContent = 'Invalid username or password.';
                 errorMessage.style.display = 'block';

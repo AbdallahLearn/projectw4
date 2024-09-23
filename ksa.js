@@ -88,3 +88,5 @@
 // colorPicker.addEventListener('input', (e) => {
 //     selectedColor = e.target.value; // Update the selected color
 // });
+
+

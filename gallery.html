@@ -123,7 +123,7 @@ fetch(url)
 
         console.log(data);
         data.forEach((e) => {
-            // Check if the object has the 'url' key and it is not empty
+            
             if ('url' in e && e.url) {
                 const imgAll = document.createElement('div');
                 imgAll.classList.add('img-all');
@@ -135,7 +135,7 @@ fetch(url)
 
                 const img = document.createElement('img');
                 img.classList.add('img');
-                img.src = e.url; // Use the correct URL key
+                img.src = e.url; 
                 img.alt = 'Uploaded Image';
                 imgText.appendChild(img);
 
@@ -144,43 +144,43 @@ fetch(url)
                 imgText.appendChild(h3);
                 
 
-                // Create heart button
+                
                 const heartButton = document.createElement('button');
                 heartButton.classList.add('heart-button');
-                heartButton.textContent = '❤️'; // Heart icon
+                heartButton.textContent = '❤️'; 
                 heartButton.style.backgroundColor='white'
                 heartButton.style.border = 'none'
                 imgText.appendChild(heartButton);
 
-                // Create a span to display the like count
+                
                 const likeCount = document.createElement('span');
                 likeCount.classList.add('like-count');
-                likeCount.textContent = e.likes || '0'; // Initialize like count from API
+                likeCount.textContent = e.likes || '0'; 
                 imgText.appendChild(likeCount);
 
-                // Add event listener to the heart button
+                
                 heartButton.addEventListener('click', () => {
-                    // Increment like count
+                  
                     let currentCount = parseInt(likeCount.textContent, 10);
                     currentCount++;
-                    likeCount.textContent = currentCount; // Update like count
+                    likeCount.textContent = currentCount; 
 
-                    // Update likes in the API
+                   
                     fetch(`${url}/${e.id}`, {
-                        method: 'PUT', // Use PUT to update the record
+                        method: 'PUT', 
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({ ...e, likes: currentCount }) // Update the likes
+                        body: JSON.stringify({ ...e, likes: currentCount }) 
                     })
                     .then(response => {
                         if (!response.ok) {
                             throw new Error('Network response was not ok');
                         }
-                        return response.json(); // Parse the JSON response
+                        return response.json(); 
                     })
                     .then(updatedData => {
-                        console.log('Updated likes:', updatedData); // Confirm update
+                        console.log('Updated likes:', updatedData); 
                     })
                     .catch(error => {
                         console.error('Error updating likes:', error);
@@ -193,39 +193,6 @@ fetch(url)
         console.error('Fetch error:', error);
     });
 
-
-// const url = 'https://66e7e6bbb17821a9d9da7058.mockapi.io/signup';
-// const containerGallery = document.querySelector('.container-gallery');
-
-// fetch(url)
-//     .then((res) => res.json())
-//     .then((data) => {
-//         console.log(data);
-//         data.forEach((e) => {
-//             const imgAll = document.createElement('div');
-//             imgAll.classList.add('img-all');
-//             containerGallery.appendChild(imgAll);
-
-//             const imgText = document.createElement('div');
-//             imgText.classList.add('img-text-container');
-//             imgAll.appendChild(imgText);
-
-//             const img = document.createElement('img');
-//             img.classList.add('img');
-
-//             // Set the image source from the URL
-//             img.src = e.url; // Ensure you're using the correct key for the image URL
-//             img.alt = 'Uploaded Image'; // Set alt attribute
-//             imgText.appendChild(img); // Append the img to the text container
-
-//             const h3 = document.createElement('h3');
-//             h3.textContent = `artist`; // Use `e.username` to get the correct username
-//             imgText.appendChild(h3); // Append the heading to the text container
-//         });
-//     })
-//     .catch(error => {
-//         console.error('Fetch error:', error);
-//     });
 
 
         let usernameValue = localStorage.getItem('Username')

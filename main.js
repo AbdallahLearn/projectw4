@@ -28,8 +28,8 @@ const setCanvasBackground = () => {
 };
 
 fillBtn.addEventListener("click", () => {
-    isFilling = !isFilling; // Toggle filling mode
-    fillBtn.classList.toggle("active", isFilling); // Optional: style change
+    isFilling = !isFilling; 
+    fillBtn.classList.toggle("active", isFilling); 
 });
 
 window.addEventListener("load", () => {
@@ -76,9 +76,9 @@ const loadImage = (event) => {
             // Draw the loaded image onto the canvas
             // ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-            removeImageBtn.style.display = "block"; // Show remove button
+            removeImageBtn.style.display = "block"; 
         };
-        img.src = e.target.result; // Start loading the image
+        img.src = e.target.result; 
     };
 
     if (file) {
@@ -88,9 +88,9 @@ const loadImage = (event) => {
 
 const removeImage = () => {
     const drawingBoard = document.querySelector('.drawing-board');
-    drawingBoard.style.backgroundImage = 'none'; // Remove the background image
-    imageInput.value = ""; // Reset the file input
-    removeImageBtn.style.display = "none"; // Hide remove button
+    drawingBoard.style.backgroundImage = 'none'; 
+    imageInput.value = ""; 
+    removeImageBtn.style.display = "none"; 
 };
 
 const drawLine = (e) => {
@@ -202,7 +202,7 @@ saveBtn.addEventListener('click', () => {
     
     const data = {
         username: username.value,
-        url: [dataURL] // Your API should expect the URL in this format
+        url: [dataURL] 
     };
 
     fetch(url, {
@@ -210,38 +210,38 @@ saveBtn.addEventListener('click', () => {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(data) // Convert the object to a JSON string
+        body: JSON.stringify(data) 
     })
     .then(response => {
         if (!response.ok) {
             throw new Error(`Network response was not ok: ${response.statusText}`);
         }
-        return response.json(); // Parse the JSON response
+        return response.json(); 
     })
     .then(data => {
-        console.log('Success:', data); // Handle success response
+        console.log('Success:', data); 
     })
     .catch(error => {
-        console.error('Error:', error); // Handle error response
+        console.error('Error:', error); 
     });
 
     const link = document.createElement("a");
     link.download = `${Date.now()}.jpg`;
-    link.href = dataURL; // Use the Data URL from the canvas
-    setCanvasBackground(); // Set the background if necessary
-    link.click(); // Trigger the download
+    link.href = dataURL; 
+    setCanvasBackground(); 
+    link.click(); 
 });
 
-// New input for image upload
-imageInput.addEventListener('change', loadImage);
-removeImageBtn.addEventListener('click', removeImage); // Add event listener for remove image button
 
-// Event listeners for mouse
+imageInput.addEventListener('change', loadImage);
+removeImageBtn.addEventListener('click', removeImage); 
+
+
 canvas.addEventListener("mousedown", startDraw); 
 canvas.addEventListener("mousemove", drawing); 
 canvas.addEventListener("mouseup", () => isDrawing = false); 
 
-// Event listeners for touch
+
 canvas.addEventListener("touchstart", startDraw);
 canvas.addEventListener("touchmove", drawing);
 canvas.addEventListener("touchend", () => isDrawing = false);
@@ -270,7 +270,7 @@ imageInput.addEventListener('change', e => {
 });
 
 uploadImg.addEventListener('click', function() {
-    const file = imageInput.files[0]; // Get the selected file
+    const file = imageInput.files[0]; 
 
     if (!file) {
         alert('Please select an image file to upload.');
@@ -278,18 +278,18 @@ uploadImg.addEventListener('click', function() {
     }
 
     const formData = new FormData();
-    formData.append('image', file); // Append the file to the FormData object
+    formData.append('image', file); 
 
-    // Send a POST request to your API
+    
     fetch(url, {
         method: 'POST',
         body: formData,
     })
     .then(response => response.json())
     .then(data => {
-        console.log('Success:', data); // Handle success response
+        console.log('Success:', data); 
     })
     .catch(error => {
-        console.error('Error:', error); // Handle error response
+        console.error('Error:', error); 
     });
 });

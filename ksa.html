@@ -59,7 +59,7 @@
 
 
     <div class="container-paint">
-        <h2>Saudi National Year 94!</h2>
+        <h2>Saudi National 94!</h2>
         <canvas id="colorCanvas"></canvas>
         <input type="color" id="colorPicker" value="#ff0000">
         <br>
@@ -70,112 +70,111 @@
     </div>
 
     <script>
-        const canvas = document.getElementById('colorCanvas');
-        const ctx = canvas.getContext('2d');
-        const colorPicker = document.getElementById('colorPicker');
-        const download = document.getElementById('downloadButton');
-        const resetButton = document.getElementById('resetButton');
+const canvas = document.getElementById('colorCanvas');
+const ctx = canvas.getContext('2d');
+const colorPicker = document.getElementById('colorPicker');
+const download = document.getElementById('downloadButton');
+const resetButton = document.getElementById('resetButton');
+
+const images = ['images/ksa.png', 'images/tower.png', 'images/old.png', 'images/b.png']; 
+let originalImage = null; 
+
+function loadRandomImage() {
+    const randomIndex = Math.floor(Math.random() * images.length);
+    const image = new Image();
+    image.src = images[randomIndex];
     
-        // Array of image sources
-        const images = ['ksa.png', 'tower.png', 'b.png', 'c.png']; // Add your images here
-        let originalImage = null; // Variable to store the original image
-    
-        // Function to load and draw a random image
-        function loadRandomImage() {
-            const randomIndex = Math.floor(Math.random() * images.length);
-            const image = new Image();
-            image.src = images[randomIndex];
-            
-            image.onload = () => {
-                canvas.width = image.width;
-                canvas.height = image.height;
-                ctx.drawImage(image, 0, 0);
-                originalImage = ctx.getImageData(0, 0, canvas.width, canvas.height); // Store original image
-            };
+    image.onload = () => {
+        canvas.width = image.width;
+        canvas.height = image.height;
+        ctx.drawImage(image, 0, 0);
+        originalImage = ctx.getImageData(0, 0, canvas.width, canvas.height); 
+    };
+}
+
+loadRandomImage();
+
+canvas.addEventListener('mousedown', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const x = Math.floor(e.clientX - rect.left);
+    const y = Math.floor(e.clientY - rect.top);
+    fill(x, y);
+});
+
+function fill(x, y) {
+    const targetColor = ctx.getImageData(x, y, 1, 1).data;
+    const newColor = hexToRgb(colorPicker.value);
+
+    // If the clicked pixel is already the new color, do nothing
+    if (colorsMatch(targetColor, newColor)) return;
+
+    const queue = [[x, y]]; // Use a queue for performance
+    ctx.fillStyle = colorPicker.value;
+
+    while (queue.length) {
+        const [nx, ny] = queue.shift(); // Get the next pixel to process
+
+        // Check if we are within bounds and if the pixel color matches the target
+        if (isInBounds(nx, ny) && colorsMatch(ctx.getImageData(nx, ny, 1, 1).data, targetColor)) {
+            ctx.fillRect(nx, ny, 1, 1);
+
+            // Push neighboring pixels onto the queue
+            queue.push([nx + 1, ny]); // Right
+            queue.push([nx - 1, ny]); // Left
+            queue.push([nx, ny + 1]); // Down
+            queue.push([nx, ny - 1]); // Up
         }
+    }
+}
+
+function hexToRgb(hex) {
+    const bigint = parseInt(hex.slice(1), 16);
+    return [
+        (bigint >> 16) & 255, 
+        (bigint >> 8) & 255,  
+        bigint & 255,         
+        255                   
+    ];
+}
+
+function colorsMatch(color1, color2) {
+    return (
+        color1[0] === color2[0] &&
+        color1[1] === color2[1] &&
+        color1[2] === color2[2]
+    );
+}
+
+function isInBounds(x, y) {
+    return x >= 0 && x < canvas.width && y >= 0 && y < canvas.height;
+}
+
+colorPicker.addEventListener('input', (e) => {
+    ctx.fillStyle = e.target.value;
+});
+
+download.addEventListener('click', () => {
+    const link = document.createElement('a');
+    link.download = 'canvas-image.png'; 
+    link.href = canvas.toDataURL(); 
+    link.click(); 
+});
+
+// Reset the canvas to the original image
+resetButton.addEventListener('click', () => {
+    if (originalImage) {
+        ctx.putImageData(originalImage, 0, 0); // Restore the original image
+    }
+});
+
+let usernameValue = localStorage.getItem('Username');
+let username = document.querySelector('#username');
+username.textContent = ` ${usernameValue}`;
+
+function logout() {
+    window.location.href = 'login.html';
+}
     
-        // Load a random image initially
-        loadRandomImage();
-    
-        // Function to handle mouse down
-        canvas.addEventListener('mousedown', (e) => {
-            const rect = canvas.getBoundingClientRect();
-            const x = Math.floor(e.clientX - rect.left);
-            const y = Math.floor(e.clientY - rect.top);
-            fill(x, y);
-        });
-    
-        // Flood fill algorithm
-        function fill(x, y) {
-            const targetColor = ctx.getImageData(x, y, 1, 1).data;
-            const newColor = hexToRgb(colorPicker.value);
-    
-            if (colorsMatch(targetColor, newColor)) return;
-    
-            const stack = [[x, y]];
-            while (stack.length) {
-                const [nx, ny] = stack.pop();
-                if (isInBounds(nx, ny) && colorsMatch(ctx.getImageData(nx, ny, 1, 1).data, targetColor)) {
-                    ctx.fillStyle = colorPicker.value;
-                    ctx.fillRect(nx, ny, 1, 1); // Fill pixel
-                    stack.push([nx + 1, ny]);
-                    stack.push([nx - 1, ny]);
-                    stack.push([nx, ny + 1]);
-                    stack.push([nx, ny - 1]);
-                }
-            }
-        }
-    
-        // Utility functions
-        function hexToRgb(hex) {
-            const bigint = parseInt(hex.slice(1), 16);
-            return [
-                (bigint >> 16) & 255, // Red
-                (bigint >> 8) & 255,  // Green
-                bigint & 255,         // Blue
-                255                   // Alpha
-            ];
-        }
-    
-        function colorsMatch(color1, color2) {
-            return (
-                color1[0] === color2[0] &&
-                color1[1] === color2[1] &&
-                color1[2] === color2[2]
-            );
-        }
-    
-        function isInBounds(x, y) {
-            return x >= 0 && x < canvas.width && y >= 0 && y < canvas.height;
-        }
-    
-        // Color picker event
-        colorPicker.addEventListener('input', (e) => {
-            ctx.fillStyle = e.target.value;
-        });
-    
-        // Download the canvas as an image
-        download.addEventListener('click', () => {
-            const link = document.createElement('a');
-            link.download = 'canvas-image.png'; // The name of the downloaded file
-            link.href = canvas.toDataURL(); // Get the image data from the canvas
-            link.click(); // Trigger the download
-        });
-    
-        // Reset the canvas to the original image
-        resetButton.addEventListener('click', () => {
-            if (originalImage) {
-                ctx.putImageData(originalImage, 0, 0); // Restore the original image
-            }
-        });
-    
-        let usernameValue = localStorage.getItem('Username');
-        let username = document.querySelector('#username');
-        username.textContent = ` ${usernameValue}`;
-    
-        function logout() {
-            window.location.href = 'login.html';
-        }
     </script>
     
     

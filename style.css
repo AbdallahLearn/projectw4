@@ -10,7 +10,7 @@
     align-items: center;
     justify-content: center;
     min-height:100vh;
-    background:rgb(156, 245, 144);
+    background:rgba(245, 235, 144, 0.486);
     
 }
 .container-board{

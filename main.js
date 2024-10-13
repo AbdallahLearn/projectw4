@@ -256,7 +256,7 @@ function logout() {
     window.location.href = 'login.html';
 }
 
-const url = 'https://66e7e6bbb17821a9d9da7058.mockapi.io/signup'; // Ensure this is the correct endpoint for image uploads
+const url = 'https://670bfff17e5a228ec1cf44f8.mockapi.io/users'; // Ensure this is the correct endpoint for image uploads
 const uploadImg = document.querySelector('#upload-img');
 
 imageInput.addEventListener('change', e => {

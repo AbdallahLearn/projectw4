@@ -1,4 +1,4 @@
-const url = 'https://66e7e6bbb17821a9d9da7058.mockapi.io/signup';
+const url = 'https://670bfff17e5a228ec1cf44f8.mockapi.io/users';
 const btnLogin = document.getElementById('btn-login');
 const username = document.getElementById('username');
 const password = document.getElementById('password');
